@@ -2,11 +2,11 @@ from django.shortcuts import redirect, render
 from django.views import View
 from .models import *
 from .forms import *
-from django.contrib.auth import authenticate, login
-from django.http import HttpResponse
-from django.contrib.auth import logout
+from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.contrib import messages
+from django.contrib.auth.forms import AuthenticationForm
 
 # Create your views here.
 
@@ -18,32 +18,34 @@ from django.http import HttpResponseRedirect
 #         return render(request, 'socialnetwork/signup.html')
 
 @login_required
-def logout(request):
-    logout(request)
-    return HttpResponseRedirect('../test')
+def home(request):
+    return render(request, 'socialnetwork/home.html')
 
-def login(request):
+@login_required
+def user_logout(request):
+    logout(request)
+    return redirect('/login')
+
+def user_login(request):
 
     if request.method == 'POST':
 
-        username = request.POST['username']
-        password = request.POST['password']
+        form = AuthenticationForm(request=request, data=request.POST)
 
-        user = authenticate(username=username, password=password)
-
-        if user:
+        if form.is_valid() and form.user_cache is not None:
+            user = form.user_cache
             if user.is_active:
                 login(request, user)
-                # return HttpResponseRedirect('../test')
+                return redirect('/home')
             else:
-                return HttpResponse("Your account is disabled.")
+                messages.error(request, 'Your account is disabled.')
         else:
-            return HttpResponse("Invalid login details supplied.")
-    else:
-        return render(request, 'socialnetwork/login.html')
+            messages.error(request, 'Invalid login details supplied.')
+
+    return render(request, 'socialnetwork/login.html')
 
 
-def signup(request):
+def user_signup(request):
 
     registered = False
 
@@ -52,9 +54,10 @@ def signup(request):
         profile_form = UserProfileForm(data=request.POST)
 
         if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
             user = user_form.save()
-            user.set_password(user.password)
-            user.save()
+            # user.set_password(user.password1)
+            # user.save()
             profile = profile_form.save(commit=False)
             profile.user = user
 
@@ -63,6 +66,7 @@ def signup(request):
 
             profile.save()
             registered = True
+            messages.success(request, 'Account created.')
 
             return redirect('/login')
 
