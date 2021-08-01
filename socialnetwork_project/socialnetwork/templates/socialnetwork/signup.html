@@ -1,0 +1,110 @@
+{% extends "./base.html" %}
+
+{% block content %}
+{% load static %}
+
+    <div class="vh-100" >
+        <div class="container h-100">
+            <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-10">
+                <div class="card text-black" style="border-radius: 25px;">
+                <div class="card-body p-md-5">
+                    <div class="row justify-content-center">
+
+                    <div class="col-md-10 col-lg-6 order-2 order-lg-2">
+        
+                        <p class="text-center h1 fw-bold mb-5 mx-1 mx-md-4 mt-4">Sign up</p>
+        
+                        <form class="mx-1 mx-md-4" id="user_form" method="post" action=""
+                        enctype="multipart/form-data">
+
+                            {% csrf_token %}
+
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="first_name">First Name</label>
+                                    {{ user_form.first_name }}
+                                    <p class="text-danger"><small>{{ user_form.first_name.errors.0 }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-user fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="last_name">Last Name</label>
+                                    {{ user_form.last_name }}
+                                    <p class="text-danger"><small>{{ user_form.last_name.errors.0 }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="birthday">Birthday</label>
+                                    {{ profile_form.birthday }}
+                                    <p class="text-danger"><small>{{ profile_form.birthday.errors.0 }}</small></p>
+                                </div>
+                            </div>
+            
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="email">Email</label>
+                                    {{ user_form.email }}
+                                    <p class="text-danger"><small>{{ user_form.email.errors.0 }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-envelope fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="email">Username</label>
+                                    {{ user_form.username }}
+                                    <p class="text-danger"><small>{{ user_form.username.errors.0 }}</small></p>
+                                </div>
+                            </div>
+            
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="password1">Password</label>
+                                    {{ user_form.password1 }}
+                                    <p class="text-danger"><small>{{ user_form.password1.errors.0 }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex flex-row align-items-center">
+                                <i class="fas fa-lock fa-lg me-3 fa-fw"></i>
+                                <div class="form-outline flex-fill mb-0">
+                                    <label class="form-label" for="password2">Confirm your password</label>
+                                    {{ user_form.password2 }}
+                                    <p class="text-danger"><small>{{ user_form.password2.errors.0 }}</small></p>
+                                </div>
+                            </div>
+
+                            <div class="d-flex justify-content-center mx-4 mb-3 mb-lg-4">
+                                <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Sign Up" />
+                            </div>
+        
+                        </form>
+        
+                    </div>
+
+                    <div class="col-md-10 col-lg-5 d-flex align-items-center order-1 order-lg-1">
+
+                        <div class="d-flex flex-column ">
+                            <h1 class="text-center fw-bold">Social Network</h1>
+                            <img src="{% static 'img/network.png' %}" class="img-fluid" alt="social">
+                        </div>
+        
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
