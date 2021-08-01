@@ -26,6 +26,12 @@
             <li class="nav-item">
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Disabled</a>
             </li>
+            <li class="nav-item active">
+            <a class="nav-link" href="#"> : Hello {{ user.username }} <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+                <a class="nav-link" href="{% url 'logout' %}"> : Logout<span class="sr-only">(current)</span></a>
+            </li>
         </ul>
         <form class="d-flex">
             <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
@@ -34,3 +40,5 @@
         </div>
     </div>
 </nav>
+
+<!-- https://mdbootstrap.com/docs/standard/navigation/navbar/# -->

@@ -28,58 +28,66 @@ def user_logout(request):
 
 def user_login(request):
 
-    if request.method == 'POST':
+    if request.user.is_authenticated:
+        return redirect('/home')
+    else:
 
-        form = AuthenticationForm(request=request, data=request.POST)
+        if request.method == 'POST':
 
-        if form.is_valid() and form.user_cache is not None:
-            user = form.user_cache
-            if user.is_active:
-                login(request, user)
-                return redirect('/home')
+            form = AuthenticationForm(request=request, data=request.POST)
+
+            if form.is_valid() and form.user_cache is not None:
+                user = form.user_cache
+                if user.is_active:
+                    login(request, user)
+                    return redirect('/home')
+                else:
+                    messages.error(request, 'Your account is disabled.')
             else:
-                messages.error(request, 'Your account is disabled.')
-        else:
-            messages.error(request, 'Invalid login details supplied.')
+                messages.error(request, 'Invalid login details supplied.')
 
-    return render(request, 'socialnetwork/login.html')
+        return render(request, 'socialnetwork/login.html')
 
 
 def user_signup(request):
 
-    registered = False
-
-    if request.method == 'POST':
-        user_form = UserForm(data=request.POST)
-        profile_form = UserProfileForm(data=request.POST)
-
-        if user_form.is_valid() and profile_form.is_valid():
-            user_form.save()
-            user = user_form.save()
-            # user.set_password(user.password1)
-            # user.save()
-            profile = profile_form.save(commit=False)
-            profile.user = user
-
-            if 'birthday' in user_form.cleaned_data:
-                profile.birthday = request.DATA['birthday']
-
-            profile.save()
-            registered = True
-            messages.success(request, 'Account created.')
-
-            return redirect('/login')
-
-        else:
-            print(user_form.errors, profile_form.errors)
+    if request.user.is_authenticated:
+        return redirect('/home')
     else:
-        user_form = UserForm()
-        profile_form = UserProfileForm()
 
-    context = {
-        'user_form': user_form,
-        'profile_form': profile_form,
-        'registered': registered
-    }
+        registered = False
 
-    return render(request, 'socialnetwork/signup.html', context)
+        if request.method == 'POST':
+            user_form = UserForm(data=request.POST)
+            profile_form = UserProfileForm(data=request.POST)
+
+            if user_form.is_valid() and profile_form.is_valid():
+                user_form.save()
+                user = user_form.save()
+                # user.set_password(user.password1)
+                # user.save()
+                profile = profile_form.save(commit=False)
+                profile.user = user
+
+                if 'birthday' in user_form.cleaned_data:
+                    profile.birthday = request.DATA['birthday']
+
+                profile.save()
+                registered = True
+                messages.success(request, 'Account created.')
+
+                return redirect('/login')
+
+            else:
+                print(user_form.errors, profile_form.errors)
+        else:
+            user_form = UserForm()
+            profile_form = UserProfileForm()
+
+        context = {
+            'user_form': user_form,
+            'profile_form': profile_form,
+            'registered': registered
+        }
+
+        return render(request, 'socialnetwork/signup.html', context)
