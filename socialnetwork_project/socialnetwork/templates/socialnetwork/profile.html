@@ -1,0 +1,79 @@
+{% include "./base.html" %}
+
+{% block content %} 
+
+<div class="container my-5">
+
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <div {% if message.tags %} 
+                {% if message.tags == "error" %} 
+                    class="alert alert-danger" 
+                {% endif %} 
+                class="alert alert-{{ message.tags }}" 
+            {% endif %} 
+            role="alert">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <div class="d-flex shadow-sm p-3 mb-5 bg-body rounded">
+        <div>
+            <img src="{{ profile.profile_picture.url }}"  width="200" height="200" />
+        </div>
+        <div class="m-4">
+            <h4> User: {{ profile.user.username }} </h4>
+
+            {% if profile.user.first_name %}
+            <h3>Name: {{ profile.user.first_name }} {{ profile.user.last_name }}</h3>
+            {% endif %}
+
+            {% if profile.birthdate %}
+            <p>Birthdate: {{ profile.birthdate }} </p>
+            {% endif %}
+
+            {% if user.is_authenticated and user == profile.user%}
+            <a class="btn btn-warning" href="{% url 'profile-edit' %}"> Edit Profile</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="d-flex flex-column shadow-sm p-3 mb-5 bg-body rounded">
+
+        <h3 class="my-3">Activity</h3>
+
+        {% if post_list %}
+            {% for post in post_list %}
+
+            <div class="card my-3">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="author-details d-flex align-items-center">
+                        <img src="{{ post.author.userprofile.profile_picture.url }}" class="rounded" width="50" height="50" />
+                        <p class="mx-3 my-0 fw-bold">{{ post.author.first_name }} {{ post.author.last_name }}</p>
+                    </div>
+                    <div>
+                        <p class="my-0"> {{ post.created_date }} </p>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-text">
+                        <p> {{ post.text }} </p>
+                    </div>
+                </div>
+            </div>
+
+            {% endfor %}    
+
+        {% else %}
+            <p>No posts to show</p>
+        {% endif %}
+
+
+    </div>
+
+</div>
+
+{% endblock %}

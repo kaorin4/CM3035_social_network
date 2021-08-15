@@ -5,6 +5,40 @@
 
     {% if user.is_authenticated %}
         <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <div {% if message.tags %} 
+                    {% if message.tags == "error" %} 
+                        class="alert alert-danger" 
+                    {% endif %} 
+                    class="alert alert-{{ message.tags }}" 
+                {% endif %} 
+                role="alert">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form class="mx-1 mx-md-4" id="post_form" method="post" action=""
+        enctype="multipart/form-data">
+    
+            {% csrf_token %}
+            {{ post_form }}
+    
+            <div class="d-grip gap-2 d-flex justify-content-center">
+                <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Post" />
+            </div>
+    
+        </form>
+    
+        {% for post in post_list %}
+            <h1> {{ post.text }} </h1>
+            <h1> {{ post.created_date }} </h1>
+        {% endfor %}    
+        
     {% else %}
         <p>Welcome, new user. Please log in.</p>
     {% endif %}

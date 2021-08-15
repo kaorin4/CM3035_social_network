@@ -4,7 +4,7 @@ from .models import *
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 
-class UserForm(UserCreationForm):
+class UserSignupForm(UserCreationForm):
 
     first_name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
     last_name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -25,9 +25,38 @@ class UserForm(UserCreationForm):
         
 
 class UserProfileForm(forms.ModelForm):
+
+    birthdate = forms.DateField(widget=forms.DateInput(format=('%Y-%m-%d'), attrs={'type': 'date', 'class': 'form-control'}))
+    profile_picture = forms.ImageField(required=False, error_messages = {'invalid': "Image files only"}, widget=forms.FileInput)
+
     class Meta:
-        model = AppUser
-        fields = ('birthday', )
+        model = UserProfile
+        fields = ('birthdate', 'profile_picture')
+
+class UserForm(forms.ModelForm):
+
+    first_name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    last_name = forms.CharField(max_length=255, widget=forms.TextInput(attrs={'class': 'form-control'}))
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
         widgets = {
-            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'})
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
         }
+
+
+class PostForm(forms.ModelForm):
+
+    text = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Whats on your mind'}))
+
+    class Meta:
+        model = Post
+        fields = ['text']
+
+
+# https://stackoverflow.com/questions/14336925/how-to-not-render-django-image-field-currently-and-clear-stuff
+# https://www.youtube.com/watch?v=aNk2CAkHvlE&ab_channel=DennisIvy
+# https://stackoverflow.com/questions/55560922/how-to-update-image-input-with-django-forms-and-template

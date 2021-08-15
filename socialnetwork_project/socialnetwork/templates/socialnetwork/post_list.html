@@ -1,0 +1,23 @@
+{% include "./base.html" %}
+
+{% block content %} 
+    <h4>Home</h4>
+
+    <form class="mx-1 mx-md-4" id="post_form" method="post" action=""
+    enctype="multipart/form-data">
+
+        {% csrf_token %}
+        {{ post_form }}
+
+        <div class="d-grip gap-2 d-flex justify-content-center">
+            <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Post" />
+        </div>
+
+    </form>
+
+    {% for post in post_list %}
+        <h1> {{ post.text }} </h1>
+        <h1> {{ post.created_date }} </h1>
+    {% endfor %}    
+
+{% endblock %}
