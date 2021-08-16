@@ -1,0 +1,32 @@
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+<script type="text/javascript">
+
+    function sendFriendRequest(username, updatedView) {
+
+        data = {
+            "csrfmiddlewaretoken": "{{csrf_token}}",
+            "receiver_username": username,
+        }
+        $.ajax({
+            type: "POST",
+            dataType: "json",
+            url: "{% url 'friend:friend_request' %}",
+            timeout: 3000,
+            data: data,
+            success: function(data){
+                console.log('success: ' + data.response)
+            },
+            error: function(data){
+                console.log('error: ' + data.response)
+            },
+            complete: function(data){
+                console.log('complete: ' + data.response)
+                updatedView()
+            },
+        })
+    }
+
+    
+
+</script>

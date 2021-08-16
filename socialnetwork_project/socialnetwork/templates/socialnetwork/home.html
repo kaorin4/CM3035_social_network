@@ -1,4 +1,4 @@
-{% include "./base.html" %}
+{% extends "./base.html" %}
 
 {% block content %} 
     <h4>Home</h4>
@@ -35,6 +35,7 @@
         </form>
     
         {% for post in post_list %}
+            <a href="{% url 'profile' post.author.username %}"> {{ post.author.username }} </a>
             <h1> {{ post.text }} </h1>
             <h1> {{ post.created_date }} </h1>
         {% endfor %}    

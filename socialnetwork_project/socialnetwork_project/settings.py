@@ -39,6 +39,7 @@ AUTHENTICATION_BACKENDS = (
 
 INSTALLED_APPS = [
     'socialnetwork.apps.SocialnetworkConfig',
+    'friend.apps.FriendConfig',
     'django_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',

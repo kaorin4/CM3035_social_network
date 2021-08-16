@@ -21,22 +21,62 @@
     {% endif %}
 
     <div class="d-flex shadow-sm p-3 mb-5 bg-body rounded">
-        <div>
-            <img src="{{ profile.profile_picture.url }}"  width="200" height="200" />
+        <div class="d-flex" style="width: 70%;">
+            <div>
+                <img src="{{ profile.profile_picture.url }}"  width="200" height="200" />
+            </div>
+            <div class="m-4">
+                <h4> User: {{ profile.user.username }} </h4>
+    
+                {% if profile.user.first_name %}
+                <h3>Name: {{ profile.user.first_name }} {{ profile.user.last_name }}</h3>
+                {% endif %}
+    
+                {% if profile.birthdate %}
+                <p>Birthdate: {{ profile.birthdate }} </p>
+                {% endif %}
+    
+                {% if is_self %}
+                <a class="btn btn-warning" href="{% url 'profile-edit' %}"> Edit Profile</a>
+                {% endif %}
+
+                {% if is_friend %}
+                <span class="badge badge-primary">Friend</span>
+                {% endif %}
+    
+                <!-- if not own profile and not a friend, then show request status -->
+                {% if not is_friend and not is_self %}
+                    {% if sent_request == 'no_request' %}
+                        <button id="send_friend_request" class="btn btn-primary" > Send Friend Request</button>
+                    {% endif %}
+                    {% if sent_request == 'sent_to_user' %}
+                        <div class="d-flex">
+                            <p>Pending friend request:</p>
+                            
+                        </div>
+                    {% endif %}
+                    {% if sent_request == 'sent_to_them' %}
+                        <div class="d-flex">
+                            <button id="cancel_friend_request" class="btn btn-danger" > Cancel Friend Request</button>
+                            
+                        </div>
+                    {% endif %}
+                {% endif %}
+    
+            </div>
         </div>
-        <div class="m-4">
-            <h4> User: {{ profile.user.username }} </h4>
-
-            {% if profile.user.first_name %}
-            <h3>Name: {{ profile.user.first_name }} {{ profile.user.last_name }}</h3>
-            {% endif %}
-
-            {% if profile.birthdate %}
-            <p>Birthdate: {{ profile.birthdate }} </p>
-            {% endif %}
-
-            {% if user.is_authenticated and user == profile.user%}
-            <a class="btn btn-warning" href="{% url 'profile-edit' %}"> Edit Profile</a>
+        <div class="d-flex flex-column justify-content-center">
+            <a class="my-3">
+                <div>
+                    <button class="btn btn-primary">Friends ({{ friends|length }})</button>
+                </div>
+            </a class="my-3">
+            {% if friend_requests %}
+            <a>
+                <div>
+                    <button class="btn btn-warning">Friend requests ({{ friend_requests|length }})</button>
+                </div>
+            </a>
             {% endif %}
         </div>
     </div>
@@ -75,5 +115,24 @@
     </div>
 
 </div>
+{% include 'friend/friend_request.html' %}
+
+<script type="text/javascript">
+
+    function onFriendRequestSent(){ 
+        location.reload();
+    }
+
+    const send_friend_request_btn = document.getElementById('send_friend_request')
+
+    if(send_friend_request_btn) {
+        document.getElementById('send_friend_request').addEventListener("click", function(){
+            console.log("{{profile.user.username}}")
+            sendFriendRequest("{{profile.user.username}}", onFriendRequestSent)
+        })
+    }
+
+</script>
 
 {% endblock %}
+

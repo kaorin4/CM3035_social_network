@@ -57,6 +57,3 @@ class PostForm(forms.ModelForm):
         fields = ['text']
 
 
-# https://stackoverflow.com/questions/14336925/how-to-not-render-django-image-field-currently-and-clear-stuff
-# https://www.youtube.com/watch?v=aNk2CAkHvlE&ab_channel=DennisIvy
-# https://stackoverflow.com/questions/55560922/how-to-update-image-input-with-django-forms-and-template

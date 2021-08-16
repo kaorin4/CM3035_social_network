@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
+from friend.utils import get_friend_request
+from friend.models import FriendRequest
 
 # Create your views here.
 
@@ -110,8 +112,7 @@ class Home(View):
 
         if request.user.is_authenticated & post_form.is_valid():
             new_post = post_form.save(commit=False)
-            # user = User.objects.get(id=user_id)
-            user = User.objects.get(username=request.user.username)
+            user = request.user
             new_post.author = user 
             new_post.save()
 
@@ -125,16 +126,53 @@ class Home(View):
             return render(request, 'socialnetwork/home.html', context)
 
 class UserProfileView(View):
-    def get(self, request, username, *args, **kwargs):
-        profile = UserProfile.objects.get(user__username=username)
-        user = profile.user
-        posts = Post.objects.filter(author=user).order_by('-created_date')
 
-        context = {
-            'user': user,
-            'profile': profile,
-            'post_list': posts,
-        }
+    def get(self, request, username, *args, **kwargs):
+
+        context = {}
+        profile = UserProfile.objects.get(user__username=username)
+        profile_user = profile.user
+        profile_posts = Post.objects.filter(author=profile_user).order_by('-created_date')
+        profile_friends = profile.friends.all()
+
+        user = request.user
+
+        is_self = False
+        is_friend = False
+        if user.is_authenticated and user != profile_user:
+            is_self = False
+            if profile_friends.filter(username=user.username):
+                is_friend = True
+            else: 
+                is_friend = False
+                # if not friends, check if there is any active friend request
+                # case 1: you have a pending request
+                if get_friend_request(sender=profile_user, receiver=user) != False:
+                    friend_request_sent_to_user = get_friend_request(sender=profile_user, receiver=user)
+                    pending_to_user_id = friend_request_sent_to_user.id
+                    context['pending_to_user_id'] = pending_to_user_id
+                    context['sent_request'] = 'sent_to_user'
+                # case 2: they have a pending request from the user
+                elif get_friend_request(sender=user, receiver=profile_user) != False:
+                    friend_request_sent_by_user = get_friend_request(sender=user, receiver=profile_user)
+                    pending_to_them_id = friend_request_sent_by_user.id
+                    context['pending_to_them_id'] = pending_to_them_id
+                    context['sent_request'] = 'sent_to_them'
+                # case 3: no requests
+                else:
+                    context['sent_request'] = 'no_request'
+
+        elif user.is_authenticated and user == profile_user:
+            is_self = True
+            friend_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
+            context['friend_requests'] = friend_requests
+
+        context['user'] = user
+        context['profile'] = profile
+        context['post_list'] = profile_posts
+        context['is_self'] = is_self
+        context['is_friend'] = is_friend
+        context['friends'] = profile_friends
 
         return render(request, 'socialnetwork/profile.html', context)
 

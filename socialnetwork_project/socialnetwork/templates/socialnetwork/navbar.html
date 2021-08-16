@@ -12,8 +12,8 @@
             <div class="navbar-nav d-flex align-items-center">
                 <div>
                     <a class="nav-link d-flex align-items-center" href="{% url 'profile' request.user.username %}"> 
-                        <img src="{{ user.userprofile.profile_picture.url }}" class="rounded" width="35" height="35" />
-                        <p class="mx-2 my-0"> {{ user.username }} </p>
+                        <img src="{{ request.user.userprofile.profile_picture.url }}" class="rounded" width="35" height="35" />
+                        <p class="mx-2 my-0"> {{ request.user.username }} </p>
                     </a>
                 </div>
                 <div class="nav-item active">

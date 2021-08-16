@@ -1,7 +1,15 @@
-{% include "./header.html" %}  
-{% include "./navbar.html" %}  
+{% load static %}
+<!doctype html>
+<html lang="en">
+    {% include "./header.html" %}  
+    <body>
+        {% include "./navbar.html" %}  
 
-<div class="container-fluid">
-    {% block content %}
-    {% endblock content %}
-</div>
+        <div class="container-fluid">
+            {% block content %}
+            {% endblock content %}
+        </div>
+
+        {% include "./scripts.html" %}  
+    </body>
+</html>
