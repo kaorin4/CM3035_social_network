@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.contrib import messages
 import json
 
 from socialnetwork.models import UserProfile
@@ -45,3 +46,102 @@ def send_friend_request(request, *args, **kwargs):
         data['response'] = "User not authenticated"
 
     return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def accept_friend_request(request, *args, **kwargs):
+    user = request.user
+    data = {}
+
+    if request.method == "POST" and user.is_authenticated:
+        request_id = request.POST.get("request_id")
+
+        if request_id:
+            # get the request
+            friend_request = FriendRequest.objects.get(id=request_id)
+
+            if friend_request.receiver == user:
+
+                friend_request.accept_request()
+                data["response"] = "Friend request accepted"
+
+            else:
+                data["response"] = "Error. not your request"
+
+        else:
+            data['response'] = "No request"
+    else:
+        data['response'] = "User not authenticated"
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def decline_friend_request(request, *args, **kwargs):
+    user = request.user
+    data = {}
+
+    if request.method == "POST" and user.is_authenticated:
+        request_id = request.POST.get("request_id")
+
+        if request_id:
+            # get the request
+            friend_request = FriendRequest.objects.get(id=request_id)
+
+            if friend_request.receiver == user:
+
+                friend_request.deactivate_request()
+                data["response"] = "Friend request declined"
+
+            else:
+                data["response"] = "Error. not your request"
+
+        else:
+            data['response'] = "No request"
+    else:
+        data['response'] = "User not authenticated"
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def cancel_friend_request(request, *args, **kwargs):
+    user = request.user
+    data = {}
+
+    if request.method == "POST" and user.is_authenticated:
+        request_id = request.POST.get("request_id")
+
+        if request_id:
+            # get the request
+            friend_request = FriendRequest.objects.get(id=request_id)
+
+            if friend_request.sender == user and friend_request.is_active:
+
+                friend_request.deactivate_request()
+                data["response"] = "Friend request cancelled"
+
+            else:
+                data["response"] = "Error. not your request"
+
+        else:
+            data['response'] = "No request"
+    else:
+        data['response'] = "User not authenticated"
+
+    return HttpResponse(json.dumps(data), content_type="application/json")
+
+@login_required
+def friend_request_list(request, *args, **kwargs):
+    user = request.user
+    context = {}
+
+    print(user)
+
+    if user.is_authenticated:
+
+        # get friend requests
+        friend_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
+        context['friend_requests'] = friend_requests
+
+        return render(request, "friend/friend_request_list.html", context)
+
+    else:
+        messages.error(request, 'User no authenticated') 

@@ -146,7 +146,7 @@ class UserProfileView(View):
             else: 
                 is_friend = False
                 # if not friends, check if there is any active friend request
-                # case 1: you have a pending request
+                # case 1: you have a pending request to accept/request
                 if get_friend_request(sender=profile_user, receiver=user) != False:
                     friend_request_sent_to_user = get_friend_request(sender=profile_user, receiver=user)
                     pending_to_user_id = friend_request_sent_to_user.id

@@ -18,19 +18,20 @@ class FriendRequest(models.Model):
         """
         Add to each other's friendlist
         """
-        sender = self.sender.userprofile
-        receiver = self.receiver.userprofile
+        sender = self.sender
+        receiver = self.receiver
         
         # add friend to friendlist
         if sender and receiver:
-            sender.friends.add(receiver)
-            receiver.friends.add(sender)
+            sender.userprofile.friends.add(receiver)
+            receiver.userprofile.friends.add(sender)
             self.is_active = False
             self.save()
 
-    def cancel_request(self):
+    def deactivate_request(self):
         """
         Cancel or decline friend request 
         """
         self.is_active = False
         self.save()
+

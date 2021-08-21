@@ -1,0 +1,41 @@
+{% include "socialnetwork/base.html" %}
+
+{% block content %} 
+
+<div class="container">
+    <h4 class="my-4">Friend Requests</h4>
+    {% if friend_requests %}
+        <ul class="list-group">
+        {% for request in friend_requests %}
+            <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
+                <div class="request-user d-flex">
+                    <img src="{{request.sender.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
+                    <div class="mx-3">
+                        <h5 class="card-title">{{request.sender.username}}</h5>
+                        <span>{{request.sender.first_name}} {{request.sender.last_name}}</span>
+                    </div>
+                </div>
+                <div>
+                    <span class="text-left">{{request.datetime}}</span>
+                    <div>
+                        <button class="btn btn-primary btn-sm" onclick='acceptFriendRequest("{{request.id}}", reloadPage)'>Accept</button>
+                        <button class="btn btn-danger btn-sm" onclick='declineFriendRequest("{{request.id}}", reloadPage)'>Reject</button>
+                    </div>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% include 'friend/friend_request_functions.html' %}
+
+<script type="text/javascript">
+
+    function reloadPage(){ 
+        location.reload();
+    }
+
+</script>
+
+{% endblock %}

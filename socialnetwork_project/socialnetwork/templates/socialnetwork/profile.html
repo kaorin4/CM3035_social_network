@@ -41,24 +41,24 @@
                 {% endif %}
 
                 {% if is_friend %}
-                <span class="badge badge-primary">Friend</span>
+                <span class="badge bg-primary">Friend</span>
                 {% endif %}
     
                 <!-- if not own profile and not a friend, then show request status -->
                 {% if not is_friend and not is_self %}
                     {% if sent_request == 'no_request' %}
-                        <button id="send_friend_request" class="btn btn-primary" > Send Friend Request</button>
+                        <button class="btn btn-primary btn-sm" onclick='sendFriendRequest("{{profile.user.username}}", reloadPage)'> Send Friend Request</button>
                     {% endif %}
                     {% if sent_request == 'sent_to_user' %}
+                        <p>Pending friend request:</p>
                         <div class="d-flex">
-                            <p>Pending friend request:</p>
-                            
+                            <button class="btn btn-primary btn-sm" onclick='acceptFriendRequest("{{pending_to_user_id}}", reloadPage)'> Accept </button>
+                            <button class="btn btn-danger btn-sm mx-3" onclick='declineFriendRequest("{{pending_to_user_id}}", reloadPage)'> Decline </button>
                         </div>
                     {% endif %}
                     {% if sent_request == 'sent_to_them' %}
                         <div class="d-flex">
-                            <button id="cancel_friend_request" class="btn btn-danger" > Cancel Friend Request</button>
-                            
+                            <button  class="btn btn-danger btn-sm" onclick='cancelFriendRequest("{{pending_to_them_id}}", reloadPage)'> Cancel Friend Request</button>
                         </div>
                     {% endif %}
                 {% endif %}
@@ -71,10 +71,10 @@
                     <button class="btn btn-primary">Friends ({{ friends|length }})</button>
                 </div>
             </a class="my-3">
-            {% if friend_requests %}
+            {% if is_self and friend_requests %}
             <a>
                 <div>
-                    <button class="btn btn-warning">Friend requests ({{ friend_requests|length }})</button>
+                    <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests|length }})</a>
                 </div>
             </a>
             {% endif %}
@@ -115,21 +115,12 @@
     </div>
 
 </div>
-{% include 'friend/friend_request.html' %}
+{% include 'friend/friend_request_functions.html' %}
 
 <script type="text/javascript">
 
-    function onFriendRequestSent(){ 
+    function reloadPage(){ 
         location.reload();
-    }
-
-    const send_friend_request_btn = document.getElementById('send_friend_request')
-
-    if(send_friend_request_btn) {
-        document.getElementById('send_friend_request').addEventListener("click", function(){
-            console.log("{{profile.user.username}}")
-            sendFriendRequest("{{profile.user.username}}", onFriendRequestSent)
-        })
     }
 
 </script>
