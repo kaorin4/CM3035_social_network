@@ -35,3 +35,11 @@ class FriendRequest(models.Model):
         self.is_active = False
         self.save()
 
+    def activate_request(self):
+        """
+        Activate friend request 
+        """
+        self.is_active = True
+        self.save()
+
+

@@ -2,31 +2,76 @@
 
 {% block content %} 
 
-<div class="container">
+<div class="container my-5">
     <h4 class="my-4">Friend Requests</h4>
-    {% if friend_requests %}
-        <ul class="list-group">
-        {% for request in friend_requests %}
-            <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
-                <div class="request-user d-flex">
-                    <img src="{{request.sender.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
-                    <div class="mx-3">
-                        <h5 class="card-title">{{request.sender.username}}</h5>
-                        <span>{{request.sender.first_name}} {{request.sender.last_name}}</span>
-                    </div>
-                </div>
-                <div>
-                    <span class="text-left">{{request.datetime}}</span>
-                    <div>
-                        <button class="btn btn-primary btn-sm" onclick='acceptFriendRequest("{{request.id}}", reloadPage)'>Accept</button>
-                        <button class="btn btn-danger btn-sm" onclick='declineFriendRequest("{{request.id}}", reloadPage)'>Reject</button>
-                    </div>
-                </div>
-            </li>
-        {% endfor %}
-        </ul>
-    {% endif %}
+    <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="pills-received-requests-tab" data-bs-toggle="pill" data-bs-target="#pills-received-requests" type="button" role="tab" aria-controls="pills-received-requests" aria-selected="true">Received ({{friend_requests_received|length}})</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="pills-sent-requests-tab" data-bs-toggle="pill" data-bs-target="#pills-sent-requests" type="button" role="tab" aria-controls="pills-sent-requests" aria-selected="false">Sent ({{friend_requests_sent|length}})</button>
+        </li>
+    </ul>
 </div>
+
+<div class="tab-content" id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-received-requests" role="tabpanel" aria-labelledby="pills-received-requests-tab">
+        <div class="container">
+            {% if friend_requests_received %}
+                <ul class="list-group">
+                {% for request in friend_requests_received %}
+                    <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
+                        <div class="request-user d-flex">
+                            <img src="{{request.sender.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
+                            <div class="mx-3">
+                                <h5 class="card-title">{{request.sender.username}}</h5>
+                                <span>{{request.sender.first_name}} {{request.sender.last_name}}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-left">{{request.datetime}}</span>
+                            <div>
+                                <button class="btn btn-primary btn-sm" onclick='acceptFriendRequest("{{request.id}}", reloadPage)'>Accept</button>
+                                <button class="btn btn-danger btn-sm" onclick='declineFriendRequest("{{request.id}}", reloadPage)'>Decline</button>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% elif not friend_requests_received%}
+                <span>No pending friend requests</span>
+            {% endif %}
+        </div>
+    </div>
+    <div class="tab-pane fade" id="pills-sent-requests" role="tabpanel" aria-labelledby="pills-sent-requests-tab">
+        <div class="container">
+            {% if friend_requests_sent %}
+                <ul class="list-group">
+                {% for request in friend_requests_sent %}
+                    <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
+                        <div class="request-user d-flex">
+                            <img src="{{request.receiver.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
+                            <div class="mx-3">
+                                <h5 class="card-title">{{request.receiver.username}}</h5>
+                                <span>{{request.receiver.first_name}} {{request.receiver.last_name}}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-left">{{request.datetime}}</span>
+                            <div>
+                                <button class="btn btn-danger btn-sm" onclick='cancelFriendRequest("{{request.id}}", reloadPage)'>Cancel</button>
+                            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+                </ul>
+            {% elif not friend_requests_sent%}
+                <span>No pending sent requests</span>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
 
 {% include 'friend/friend_request_functions.html' %}
 
