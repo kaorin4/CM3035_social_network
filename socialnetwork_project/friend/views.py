@@ -4,6 +4,8 @@ from django.http import HttpResponse
 from django.contrib import messages
 import json
 
+from django.views.generic.base import View
+
 from socialnetwork.models import UserProfile
 from friend.models import *
 # Create your views here.
@@ -151,3 +153,32 @@ def friend_request_list(request, *args, **kwargs):
 
     else:
         messages.error(request, 'User no authenticated') 
+
+@login_required
+def friend_list(request, username, *args, **kwargs):
+    user = request.user
+
+    if user.is_authenticated:
+
+        user_profile = User.objects.get(username=username)
+
+        # get friends
+        friends = user_profile.userprofile.friends.all()
+
+        context = {
+            'friends': friends,
+        }
+
+        return render(request, "friend/friend_list.html", context)
+
+    else:
+        messages.error(request, 'User no authenticated') 
+
+
+
+
+
+
+
+
+

@@ -5,8 +5,8 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" method="get" action="{% url 'user-search' %}">
+                <input class="form-control me-2" type="search" placeholder="Search users" aria-label="Search" name="query" value={{request.GET.query}}>
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             <div class="navbar-nav d-flex align-items-center">

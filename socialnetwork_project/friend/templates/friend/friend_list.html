@@ -1,0 +1,25 @@
+{% include "socialnetwork/base.html" %}
+
+{% block content %} 
+
+<div class="container">
+    <h4 class="my-4">Friends list</h4>
+    <div class="row row-cols-1 row-cols-md-6 g-6 my-3">
+        {% for friend in friends %}
+        <div class="card py-3">
+            <img src="{{friend.userprofile.profile_picture.url}}" class="rounded mx-auto d-block" width="50" height="50" />
+            <div class="card-body text-center">
+                <h5 class="card-title text-center">
+                    <a href="{% url 'profile' friend.username %}" style="text-decoration: none">
+                    {{friend.username}}
+                    </a>
+                </h5>
+                <span>{{friend.first_name}} {{friend.last_name}}</span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,4 +1,4 @@
-from django.forms.models import construct_instance
+from django.db.models import query
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
 from django.views.generic.edit import UpdateView
@@ -12,6 +12,9 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
 from friend.utils import get_friend_request
 from friend.models import FriendRequest
+from django.db.models.query_utils import Q
+from django.db.models.functions import Concat 
+from django.db.models import Value as V
 
 # Create your views here.
 
@@ -223,4 +226,23 @@ class EditProfile(View):
         }
 
         return render(request, 'socialnetwork/profile_edit.html', context)
+
+
+class UserSearch(View):
+
+    def get(self, request, *args, **kwargs):
+        user_searched = self.request.GET.get('query')
+        users = User.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(
+            Q(username__icontains=user_searched)|
+            Q(first_name__icontains=user_searched)|
+            Q(last_name__icontains=user_searched)|
+            Q(full_name__icontains=user_searched)
+        )
+
+        context = {
+            'users': users,
+        }
+
+        return render(request, 'socialnetwork/user_search.html', context)
+
 
