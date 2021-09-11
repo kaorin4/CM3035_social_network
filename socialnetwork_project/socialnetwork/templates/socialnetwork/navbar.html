@@ -11,6 +11,11 @@
             </form>
             <div class="navbar-nav d-flex align-items-center">
                 <div>
+                    <a class="nav-item nav-link" href="{% url 'chat:chat_list' %}"> 
+                        Messages
+                    </a>
+                </div>
+                <div>
                     <a class="nav-link d-flex align-items-center" href="{% url 'profile' request.user.username %}"> 
                         <img src="{{ request.user.userprofile.profile_picture.url }}" class="rounded" width="35" height="35" />
                         <p class="mx-2 my-0"> {{ request.user.username }} </p>

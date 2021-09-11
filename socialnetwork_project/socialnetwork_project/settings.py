@@ -40,6 +40,9 @@ AUTHENTICATION_BACKENDS = (
 INSTALLED_APPS = [
     'socialnetwork.apps.SocialnetworkConfig',
     'friend.apps.FriendConfig',
+    'chat.apps.ChatConfig',
+
+    'channels',
     'django_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -78,7 +81,7 @@ TEMPLATES = [
     },
 ]
 
-
+ASGI_APPLICATION = 'socialnetwork_project.routing.application'
 WSGI_APPLICATION = 'socialnetwork_project.wsgi.application'
 
 
@@ -118,8 +121,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_L10N = True
@@ -147,3 +148,12 @@ LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}

@@ -164,9 +164,11 @@ def friend_list(request, username, *args, **kwargs):
 
         # get friends
         friends = user_profile.userprofile.friends.all()
+        is_logged_user_profile = True if user.username == username else False
 
         context = {
             'friends': friends,
+            'is_logged_user_profile': is_logged_user_profile
         }
 
         return render(request, "friend/friend_list.html", context)

@@ -15,6 +15,9 @@
                     </a>
                 </h5>
                 <span>{{friend.first_name}} {{friend.last_name}}</span>
+                {% if is_logged_user_profile %}
+                    <a href="{% url 'chat:chat_room' friend.username %}" class="btn btn-primary my-2">Chat</a>
+                {% endif %}
             </div>
         </div>
         {% endfor %}
