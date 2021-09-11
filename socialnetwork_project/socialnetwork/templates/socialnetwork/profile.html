@@ -99,9 +99,10 @@
                     </div>
                 </div>
                 <div class="card-body">
-                    <div class="card-text">
-                        <p> {{ post.text }} </p>
-                    </div>
+                    <p class="card-text"> {{ post.text }} </p>
+                    {% if post.image %}
+                        <img src="{{ post.image.url }}" class="rounded mx-auto d-block" alt="..." style="height: 300px; width:250px;">
+                    {% endif %}
                 </div>
             </div>
 

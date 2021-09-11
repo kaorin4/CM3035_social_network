@@ -1,7 +1,6 @@
-from django.db.models import query
+from django.contrib import auth
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic.edit import UpdateView
 from .models import *
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
@@ -99,30 +98,46 @@ def user_signup(request):
 class Home(View):
 
     def get(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_date')
-        post_form = PostForm()
+        user = request.user
+        profile = UserProfile.objects.filter(user=user).first()
 
-        context = {
-            'post_list': posts,
-            'post_form': post_form
-        }
+        if profile is not None:
 
-        return render(request, 'socialnetwork/home.html', context)
+            user_friends = user.userprofile.friends.all()
+            feed_posts = Post.objects.filter(Q(author__in=user_friends) | Q(author=user)).order_by('-created_date')
+            # posts = Post.objects.all().order_by('-created_date')
+            post_form = PostForm()
+
+            context = {
+                'post_list': feed_posts,
+                'post_form': post_form
+            }
+
+            return render(request, 'socialnetwork/home.html', context)
+
+        else:
+            messages.error(request, 'Create an account.')
+            logout(request)
+            return redirect('/login')
 
     def post(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_date')
-        post_form = PostForm(request.POST)
+        # posts = Post.objects.all().order_by('-created_date')
+        post_form = PostForm(request.POST, request.FILES)
 
         if request.user.is_authenticated & post_form.is_valid():
             new_post = post_form.save(commit=False)
             user = request.user
             new_post.author = user 
+            print(post_form)
             new_post.save()
+
+            user_friends = user.userprofile.friends.all()
+            feed_posts = Post.objects.filter(Q(author__in=user_friends) | Q(author=user)).order_by('-created_date')
 
             messages.success(request, 'Post created.')
 
             context = {
-                'post_list': posts,
+                'post_list': feed_posts,
                 'post_form': post_form
             }
 

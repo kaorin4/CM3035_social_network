@@ -27,8 +27,11 @@
         {% else %}
             <span>Looks like you haven't started a conversation. Start one.</span>
         {% endif %}
-        <span>Start a new conversation: </span>
-        <a class="btn btn-primary" href="{% url 'friend:friend_list' user.username %}"> Go to friends list </a>
+
+        <div class="my-3">
+            <span>Start a new conversation: </span>
+            <a class="btn btn-primary" href="{% url 'friend:friend_list' user.username %}"> Go to friends list </a>
+        </div>
     </div>
 
 </div>
