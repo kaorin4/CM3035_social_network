@@ -20,5 +20,6 @@ urlpatterns = [
     path('', include('socialnetwork.urls')),
     path('admin/', admin.site.urls),
     path('friend', include('friend.urls', namespace='friend')),
-    path('chat/', include('chat.urls', namespace='chat'))
+    path('chat/', include('chat.urls', namespace='chat')),
+    path('api/', include('api.urls', namespace='api'))
 ]

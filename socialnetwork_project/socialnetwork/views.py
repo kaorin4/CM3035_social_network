@@ -17,9 +17,6 @@ from django.db.models import Value as V
 
 # Create your views here.
 
-# @login_required
-# def home(request):
-#     return render(request, 'socialnetwork/home.html')
 
 @login_required
 def user_logout(request):

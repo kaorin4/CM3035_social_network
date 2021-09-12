@@ -39,10 +39,12 @@ AUTHENTICATION_BACKENDS = (
 
 INSTALLED_APPS = [
     'socialnetwork.apps.SocialnetworkConfig',
+    'api.apps.ApiConfig',
     'friend.apps.FriendConfig',
     'chat.apps.ChatConfig',
 
     'channels',
+    'rest_framework',
     'django_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,6 +54,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 ]
+
+# allow any access to any user
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

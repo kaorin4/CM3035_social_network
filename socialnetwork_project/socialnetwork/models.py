@@ -1,12 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from datetime import date
+from django.core.validators import MaxValueValidator
 
 # Create your models here.
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    birthdate = models.DateField(null=False, blank=False)
+    birthdate = models.DateField(null=False, blank=False, validators=[MaxValueValidator(limit_value=date.today)])
     profile_picture = models.ImageField(upload_to='uploads/profile_pictures', null=True, default='uploads/profile_pictures/default.png')
     friends = models.ManyToManyField(User, blank=True, related_name='friends')
 
