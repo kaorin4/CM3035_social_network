@@ -20,6 +20,7 @@ def send_friend_request(request, *args, **kwargs):
 
         if receiver_username:
             receiver = User.objects.get(username=receiver_username)
+            # get user friends list
             user_friends = user.userprofile.friends.all()
 
             is_friend = user_friends.filter(username=receiver.username)

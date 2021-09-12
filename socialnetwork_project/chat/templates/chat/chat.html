@@ -7,16 +7,6 @@
         <div id="message-container" class="overflow-auto d-flex flex-md-column" style="height: 80%;">
             <div id="message-list">
                 {% for message in messages %}
-                    {% if message.sender == user %}
-                        <div class="text-end m-2 d-flex flex-column justify-content-end">
-                            <div>
-                                <span class="fw-bold">{{message.sender.username}}</span> <span class="chat-message-date">{{message.timestamp|date}} {{message.timestamp|localtime}}</span>
-                            </div>
-                            <div>
-                                <span>{{message.content}}</span>
-                            </div>
-                        </div>
-                    {% elif message.sender == friend %}
                     <div class="text-start m-2 d-flex flex-column justify-content-start">
                         <div>
                             <span class="fw-bold">{{message.sender.username}}</span> <span class="chat-message-date">{{message.timestamp|localtime}}</span>
@@ -25,7 +15,6 @@
                             <span>{{message.content}}</span>
                         </div>
                     </div>
-                    {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -62,7 +51,7 @@
         const msg_list = document.getElementById('message-list')
         const msg = document.createElement('div')
         const msg_container = document.createElement('div')
-        msg_container.classList.add('text-end','m-2','d-flex','flex-column','justify-content-end')
+        msg_container.classList.add('m-2','d-flex','flex-column','justify-content-end')
         const msg_sender_div = document.createElement('div')
         const msg_sender_span = document.createElement('span')
         msg_sender_span.classList.add('fw-bold')

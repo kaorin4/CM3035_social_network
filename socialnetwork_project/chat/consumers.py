@@ -12,6 +12,7 @@ class ChatConsumer(AsyncConsumer):
         logged_user = self.scope['user']
         friend_username = self.scope['url_route']['kwargs']['username']
         friend_user = await sync_to_async(User.objects.get)(username=friend_username)
+        # get or create chat object 
         self.chat_obj = await sync_to_async(Chat.objects.get_or_create_chat)(logged_user, friend_user)
         self.room_name = f'{self.chat_obj.room_name}'
 

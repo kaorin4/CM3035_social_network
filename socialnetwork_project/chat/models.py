@@ -7,6 +7,9 @@ from django.db.models import Q
 class ChatManager(models.Manager):
 
     def get_or_create_chat(self, user1, user2):
+        """
+        Filters and returns the chat between two users if its exists. Otherwise, it creates it
+        """
         chat = self.get_queryset().filter((Q(user1=user1) and Q(user2=user2)) | (Q(user1=user2) and Q(user2=user1)))
         if chat.exists():
             return chat.first()
@@ -18,7 +21,9 @@ class ChatManager(models.Manager):
             return chat
 
     def by_user(self, user):
-        "Return list of chats by user"
+        """
+        Return list of chats by user
+        """
         return self.get_queryset().filter(Q(user1=user) | Q(user2=user))
 
 

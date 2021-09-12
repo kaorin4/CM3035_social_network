@@ -16,12 +16,12 @@ class FriendRequest(models.Model):
 
     def accept_request(self):
         """
-        Add to each other's friendlist
+        Add both users to each other's friends list
         """
         sender = self.sender
         receiver = self.receiver
         
-        # add friend to friendlist
+        # add friend to friends list
         if sender and receiver:
             sender.userprofile.friends.add(receiver)
             receiver.userprofile.friends.add(sender)
@@ -37,7 +37,7 @@ class FriendRequest(models.Model):
 
     def activate_request(self):
         """
-        Activate friend request 
+        Activate friend request. Shows up again
         """
         self.is_active = True
         self.save()

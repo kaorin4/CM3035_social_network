@@ -11,7 +11,6 @@ class UserList(generics.ListAPIView):
     """
     queryset = User.objects.all().distinct()
     serializer_class = UserSerializer
-    permission_classes = [IsAdminUser]
 
 
 class UserProfileDetails(generics.RetrieveAPIView):
@@ -24,7 +23,6 @@ class UserProfileDetails(generics.RetrieveAPIView):
     lookup_field = 'user__username'
     queryset = UserProfile.objects.all()
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAdminUser]
 
 
 class CreateUserProfile(generics.CreateAPIView):
@@ -34,7 +32,6 @@ class CreateUserProfile(generics.CreateAPIView):
     """
 
     serializer_class = UserProfileSerializer
-    permission_classes = [IsAdminUser]
 
 
 class UserPostsList(generics.ListAPIView):
@@ -44,7 +41,6 @@ class UserPostsList(generics.ListAPIView):
     """
     queryset = Post.objects.all().distinct()
     serializer_class = PostSerializer
-    permission_classes = [IsAdminUser]
 
     """
     Filter the list of posts of a given author
@@ -62,6 +58,5 @@ class UserFriendsDetails(generics.RetrieveAPIView):
     lookup_field = 'user__username'
     queryset = UserProfile.objects.all()
     serializer_class = FriendSerializer
-    permission_classes = [IsAdminUser]
 
 

@@ -36,7 +36,7 @@
                 <p>Birthdate: {{ profile.birthdate }} </p>
                 {% endif %}
     
-                {% if is_self %}
+                {% if is_logged_user %}
                 <a class="btn btn-warning" href="{% url 'profile-edit' %}"> Edit Profile</a>
                 {% endif %}
 
@@ -45,7 +45,7 @@
                 {% endif %}
     
                 <!-- if not own profile and not a friend, then show request status -->
-                {% if not is_friend and not is_self %}
+                {% if not is_friend and not is_logged_user %}
                     {% if sent_request == 'no_request' %}
                         <button class="btn btn-primary btn-sm" onclick='sendFriendRequest("{{profile.user.username}}", reloadPage)'> Send Friend Request</button>
                     {% endif %}
@@ -71,7 +71,7 @@
                     <button class="btn btn-primary">Friends ({{ friends|length }})</button>
                 </div>
             </a class="my-3">
-            {% if is_self and friend_requests %}
+            {% if is_logged_user and friend_requests %}
             <a>
                 <div>
                     <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests|length }})</a>
