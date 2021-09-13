@@ -57,6 +57,9 @@ class ChatConsumer(AsyncConsumer):
 
     @database_sync_to_async
     def save_message(self, content):
+        """
+        Save chat message into the database
+        """
         # store message in db
         ChatMessage.objects.create(
             chat = self.chat_obj,

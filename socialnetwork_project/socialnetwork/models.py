@@ -7,32 +7,17 @@ from django.core.validators import MaxValueValidator
 # Create your models here.
 
 class UserProfile(models.Model):
+    """
+    Profile of a user, includes additional fields such as birthdate, picture
+    """
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     birthdate = models.DateField(null=False, blank=False, validators=[MaxValueValidator(limit_value=date.today)])
     profile_picture = models.ImageField(upload_to='uploads/profile_pictures', null=True, default='uploads/profile_pictures/default.png')
     friends = models.ManyToManyField(User, blank=True, related_name='friends')
 
-    def __unicode__(self):
+    def __str__(self):
         return self.user.username
-
-    def get_friends(self):
-        return ",".join([friend.username for friend in self.friends.all()])
-
-    def add_to_friendlist(self, user):
-        """
-        Add user to friendlist
-        """
-        if not user in self.friends.all():
-            self.friends.add(user)
-            self.save()
-
-    def remove_from_friendlist(self, user):
-        """
-        Delete user from friendlist
-        """
-        if user in self.friends.all():
-            self.friends.remove(user)
-            self.save()
 
     def is_friend(self, friend):
         """
@@ -44,6 +29,10 @@ class UserProfile(models.Model):
 
 
 class Post(models.Model):
+    """
+    Post includes author, text content, image and date it was created
+    """
+
     text = models.TextField()
     image = models.ImageField(upload_to='uploads/posts_pictures', null=True)
     created_date = models.DateTimeField(default=timezone.now)
