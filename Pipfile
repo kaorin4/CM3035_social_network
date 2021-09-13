@@ -7,6 +7,13 @@ name = "pypi"
 django = "*"
 django-bootstrap5 = "*"
 django-allauth = "*"
+pillow = "*"
+channels-redis = "*"
+redis = "*"
+asgiref = "*"
+djangorestframework = "*"
+requests = "*"
+factory-boy = "*"
 
 [dev-packages]
 
