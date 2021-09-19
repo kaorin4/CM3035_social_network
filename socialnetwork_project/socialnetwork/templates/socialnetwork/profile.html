@@ -23,7 +23,9 @@
     <div class="d-flex shadow-sm p-3 mb-5 bg-body rounded">
         <div class="d-flex" style="width: 70%;">
             <div>
+                {% if profile.profile_picture %}
                 <img src="{{ profile.profile_picture.url }}"  width="200" height="200" />
+                {% endif %}
             </div>
             <div class="m-4">
                 <h4> User: {{ profile.user.username }} </h4>

@@ -9,7 +9,9 @@
             {% for user in users %}
             <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
                 <div class="d-flex">
+                    {% if user.userprofile.profile_picture %}
                     <img src="{{user.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
+                    {% endif %}
                     <div class="mx-3">
                         <h5 class="card-title">
                             <a href="{% url 'profile' user.username %}" style="text-decoration: none">{{user.username}}</a>

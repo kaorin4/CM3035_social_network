@@ -21,7 +21,7 @@ class ChatConsumer(AsyncConsumer):
             'type': 'websocket.accept'
         })
 
-        print(f'[{self.channel_name}] - You are connected')
+        print(f'[{self.channel_name}] - Connected')
 
     async def websocket_receive(self, event):
         print(f'[{self.channel_name}] - Received message - {event["text"]}')
@@ -43,7 +43,7 @@ class ChatConsumer(AsyncConsumer):
         )
 
     async def websocket_message(self, event):
-        print(f'[{self.channel_name}] - Message sent - {event["text"]}')
+        print(f'[{self.channel_name}] - Sent message - {event["text"]}')
         await self.send({
             'type': 'websocket.send',
             'text': event.get('text')
