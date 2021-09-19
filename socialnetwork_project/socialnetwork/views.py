@@ -180,8 +180,10 @@ class UserProfileView(View):
 
         elif user.is_authenticated and user == profile_user:
             is_logged_user = True
-            friend_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
-            context['friend_requests'] = friend_requests
+            friend_requests_received = FriendRequest.objects.filter(receiver=user, is_active=True)
+            friend_requests_sent = FriendRequest.objects.filter(sender=user, is_active=True)
+            context['friend_requests_received'] = friend_requests_received
+            context['friend_requests_sent'] = friend_requests_sent
 
         context['user'] = user
         context['profile'] = profile

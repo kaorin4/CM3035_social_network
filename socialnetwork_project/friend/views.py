@@ -1,8 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.contrib import messages
-import json
+from django.http import JsonResponse
 
 from django.views.generic.base import View
 
@@ -52,7 +51,7 @@ def send_friend_request(request, *args, **kwargs):
     else:
         data['response'] = "User not authenticated"
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    return JsonResponse(data)
 
 @login_required
 def accept_friend_request(request, *args, **kwargs):
@@ -65,12 +64,12 @@ def accept_friend_request(request, *args, **kwargs):
         if request_id:
             # get the request
             friend_request = FriendRequest.objects.get(id=request_id)
-
+            # accept if logged user is the receiver of the request
             if friend_request.receiver == user:
 
                 friend_request.accept_request()
                 data["response"] = "Friend request accepted"
-
+            # if logged user is not the receiver then its the wrong request
             else:
                 data["response"] = "Error. not your request"
 
@@ -79,7 +78,7 @@ def accept_friend_request(request, *args, **kwargs):
     else:
         data['response'] = "User not authenticated"
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    return JsonResponse(data)
 
 @login_required
 def decline_friend_request(request, *args, **kwargs):
@@ -92,7 +91,7 @@ def decline_friend_request(request, *args, **kwargs):
         if request_id:
             # get the request
             friend_request = FriendRequest.objects.get(id=request_id)
-
+            # decline if logged user is the receiver of the request
             if friend_request.receiver == user:
 
                 friend_request.deactivate_request()
@@ -106,7 +105,7 @@ def decline_friend_request(request, *args, **kwargs):
     else:
         data['response'] = "User not authenticated"
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    return JsonResponse(data)
 
 @login_required
 def cancel_friend_request(request, *args, **kwargs):
@@ -119,7 +118,7 @@ def cancel_friend_request(request, *args, **kwargs):
         if request_id:
             # get the request
             friend_request = FriendRequest.objects.get(id=request_id)
-
+            # inactivate request if logged user sent it and the request is still active
             if friend_request.sender == user and friend_request.is_active:
 
                 friend_request.deactivate_request()
@@ -133,7 +132,7 @@ def cancel_friend_request(request, *args, **kwargs):
     else:
         data['response'] = "User not authenticated"
 
-    return HttpResponse(json.dumps(data), content_type="application/json")
+    return JsonResponse(data)
 
 @login_required
 def friend_request_list(request, *args, **kwargs):

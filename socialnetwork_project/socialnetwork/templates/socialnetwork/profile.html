@@ -71,12 +71,12 @@
                     <a class="btn btn-primary" href="{% url 'friend:friend_list' profile.user.username %}">Friends ({{ friends|length }})</a>
                 </div>
             </a class="my-3">
-            {% if is_logged_user and friend_requests %}
-            <a>
-                <div>
-                    <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests|length }})</a>
-                </div>
-            </a>
+            {% if is_logged_user %}
+                <a>
+                    <div>
+                        <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests|length }})</a>
+                    </div>
+                </a>
             {% endif %}
         </div>
     </div>

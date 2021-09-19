@@ -25,6 +25,7 @@ class FriendRequest(models.Model):
         if sender and receiver:
             sender.userprofile.friends.add(receiver)
             receiver.userprofile.friends.add(sender)
+            # deactivate request
             self.is_active = False
             self.save()
 
