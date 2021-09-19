@@ -76,7 +76,7 @@
             {% if is_logged_user %}
                 <a>
                     <div>
-                        <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests|length }})</a>
+                        <a class="btn btn-warning" href="{% url 'friend:friend_request_list' %}">Friend requests ({{ friend_requests_received|length }})</a>
                     </div>
                 </a>
             {% endif %}

@@ -24,6 +24,9 @@ def user_logout(request):
     return redirect('/login')
 
 def user_login(request):
+    """
+    Authenticates user
+    """
 
     if request.user.is_authenticated:
         return redirect('/home')
@@ -49,6 +52,9 @@ def user_login(request):
 
 
 def user_signup(request):
+    """
+    Creates new User instance and UserProfile instance
+    """
 
     if request.user.is_authenticated:
         return redirect('/home')
@@ -92,14 +98,22 @@ def user_signup(request):
 
 
 class Home(View):
+    """
+    Displays the homepage. News feed of the logged user
+    """
 
     def get(self, request, *args, **kwargs):
+        """
+        Return list of posts from logged user's friends list
+        """
+
         user = request.user
         profile = UserProfile.objects.filter(user=user).first()
 
         if profile is not None:
 
             user_friends = user.userprofile.friends.all()
+            # get logged user posts and friends posts
             feed_posts = Post.objects.filter(Q(author__in=user_friends) | Q(author=user)).order_by('-created_date')
 
             post_form = PostForm()
@@ -117,6 +131,9 @@ class Home(View):
             return redirect('/login')
 
     def post(self, request, *args, **kwargs):
+        """
+        Save post instance 
+        """
 
         post_form = PostForm(request.POST, request.FILES)
 
@@ -142,6 +159,9 @@ class Home(View):
             return render(request, 'socialnetwork/home.html', context)
 
 class UserProfileView(View):
+    """
+    Returns info of the user profile such as posts, friends 
+    """
 
     def get(self, request, username, *args, **kwargs):
 

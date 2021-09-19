@@ -11,6 +11,10 @@ from friend.models import *
 
 @login_required
 def send_friend_request(request, *args, **kwargs):
+    """
+    Creates a new friend request with the logged user as sender and provided user as received
+    """
+
     user = request.user
     data = {}
 
@@ -55,6 +59,10 @@ def send_friend_request(request, *args, **kwargs):
 
 @login_required
 def accept_friend_request(request, *args, **kwargs):
+    """
+    Both users are added to each other's friendlist. Request is then set as not active
+    """
+
     user = request.user
     data = {}
 
@@ -82,6 +90,10 @@ def accept_friend_request(request, *args, **kwargs):
 
 @login_required
 def decline_friend_request(request, *args, **kwargs):
+    """
+    Friend request object is set to inactive
+    """
+
     user = request.user
     data = {}
 
@@ -109,6 +121,10 @@ def decline_friend_request(request, *args, **kwargs):
 
 @login_required
 def cancel_friend_request(request, *args, **kwargs):
+    """
+    Friend request object is set to inactive
+    """
+
     user = request.user
     data = {}
 
@@ -136,6 +152,10 @@ def cancel_friend_request(request, *args, **kwargs):
 
 @login_required
 def friend_request_list(request, *args, **kwargs):
+    """
+    Returns list of friend requests sent and received of the logged user
+    """
+
     user = request.user
     context = {}
 
@@ -156,22 +176,30 @@ def friend_request_list(request, *args, **kwargs):
 
 @login_required
 def friend_list(request, username, *args, **kwargs):
+    """
+    Returns list of friends of given username
+    """
+
     user = request.user
 
     if user.is_authenticated:
 
         user_profile = User.objects.get(username=username)
 
-        # get friends
-        friends = user_profile.userprofile.friends.all()
-        is_logged_user_profile = True if user.username == username else False
+        if user_profile:
 
-        context = {
-            'friends': friends,
-            'is_logged_user_profile': is_logged_user_profile
-        }
+            # get friends
+            friends = user_profile.userprofile.friends.all()
+            is_logged_user_profile = True if user.username == username else False
 
-        return render(request, "friend/friend_list.html", context)
+            context = {
+                'friends': friends,
+                'is_logged_user_profile': is_logged_user_profile
+            }
+
+            return render(request, "friend/friend_list.html", context)
+        else:
+            messages.error(request, 'User does not exist') 
 
     else:
         messages.error(request, 'User no authenticated') 
