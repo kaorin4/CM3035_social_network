@@ -1,0 +1,39 @@
+{% include "socialnetwork/base.html" %}
+
+{% block content %} 
+
+<div class="container">
+    <h4 class="my-4">Chat list</h4>
+    <p> Select a chat from your active chat list to see your messages with that friend. </p>
+    <div>
+        {% if has_chats %}
+        <ul class="list-chat">
+            {% for chat_obj, chat_user in chat_list %}
+                <a href="{% url 'chat:chat_room' chat_user %}" class="text-decoration-none text-reset">
+                    <li class="list-chat-item d-flex justify-content-between my-3 border p-3" style="width: 60%;">
+                        <div class="d-flex">
+                            <div class="mx-3">
+                                <h5 class="card-title"> {{ chat_user }} </h5>
+                                <span>{{ chat_user.first_name }} {{ chat_user.last_name }}</span>
+                            </div>
+                        </div>
+                        <div>
+                            <span class="text-left">{{ chat_obj.updated_at }}</span>
+                        </div>
+                    </li>
+                </a>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <span>Looks like you haven't started a conversation. Start one.</span>
+        {% endif %}
+
+        <div class="my-3">
+            <span>Start a new conversation: </span>
+            <a class="btn btn-primary" href="{% url 'friend:friend_list' user.username %}"> Go to friends list </a>
+        </div>
+    </div>
+
+</div>
+
+{% endblock %}

@@ -16,21 +16,31 @@ class FriendRequest(models.Model):
 
     def accept_request(self):
         """
-        Add to each other's friendlist
+        Add both users to each other's friends list
         """
-        sender = self.sender.userprofile
-        receiver = self.receiver.userprofile
+        sender = self.sender
+        receiver = self.receiver
         
-        # add friend to friendlist
+        # add friend to friends list
         if sender and receiver:
-            sender.friends.add(receiver)
-            receiver.friends.add(sender)
+            sender.userprofile.friends.add(receiver)
+            receiver.userprofile.friends.add(sender)
+            # deactivate request
             self.is_active = False
             self.save()
 
-    def cancel_request(self):
+    def deactivate_request(self):
         """
         Cancel or decline friend request 
         """
         self.is_active = False
         self.save()
+
+    def activate_request(self):
+        """
+        Activate friend request. Shows up again
+        """
+        self.is_active = True
+        self.save()
+
+

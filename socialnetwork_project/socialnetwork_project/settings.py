@@ -27,7 +27,10 @@ SECRET_KEY = 'django-insecure-3rsyk&3xt1v=-l^vnqxhu2cjn!3@l9%tzb60bj(w)@ny^!=rg$
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1'
+]
 
 # Authentication backends
 AUTHENTICATION_BACKENDS = (
@@ -39,7 +42,12 @@ AUTHENTICATION_BACKENDS = (
 
 INSTALLED_APPS = [
     'socialnetwork.apps.SocialnetworkConfig',
+    'api.apps.ApiConfig',
     'friend.apps.FriendConfig',
+    'chat.apps.ChatConfig',
+
+    'channels',
+    'rest_framework',
     'django_bootstrap5',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -49,6 +57,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
 ]
+
+# allow any access to any user
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -78,7 +93,7 @@ TEMPLATES = [
     },
 ]
 
-
+ASGI_APPLICATION = 'socialnetwork_project.routing.application'
 WSGI_APPLICATION = 'socialnetwork_project.wsgi.application'
 
 
@@ -118,8 +133,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
-
 USE_I18N = True
 
 USE_L10N = True
@@ -147,3 +160,18 @@ LOGIN_URL = '/login'
 LOGIN_REDIRECT_URL = '/home'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [("127.0.0.1", 6379)],
+#         },
+#     },
+# }
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}

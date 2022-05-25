@@ -1,0 +1,112 @@
+{% include "socialnetwork/base.html" %}
+{% load tz %}
+
+{% block content %}
+    <div class="container my-3 p-3" style="height: 80vh; width: 70vw; max-width: 500px;">
+        <h3>Chat between: {{user.username}} and {{friend.username}}</h3>
+        <div id="message-container" class="overflow-auto d-flex flex-md-column" style="height: 80%;">
+            <div id="message-list">
+                {% for message in messages %}
+                    <div class="text-start m-2 d-flex flex-column justify-content-start">
+                        <div>
+                            <span class="fw-bold">{{message.sender.username}}</span> <span class="chat-message-date">{{message.timestamp|localtime}}</span>
+                        </div>
+                        <div>
+                            <span>{{message.content}}</span>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <form id="message-form">
+            {% csrf_token %}
+            <textarea class="form-control"name="message" id="message" rows="3" required></textarea>
+            <input type="submit" value="Send" class="btn btn-primary my-3">
+        </form>
+    </div>
+{% endblock content %}
+
+{% block custom_javascript %}
+<script>
+
+    // scroll to bottom of chat
+    const element = document.getElementById("message-container");
+    element.scrollTop = element.scrollHeight;
+
+    // web socket connection
+    const chatSocket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws'
+            + window.location.pathname
+        );
+
+    chatSocket.onopen = function(event) {
+        console.log('Connection is open')
+    }
+
+    chatSocket.onmessage = function(event) {
+        console.log('Message received', event)
+
+        const msg_list = document.getElementById('message-list')
+        const msg = document.createElement('div')
+        const msg_container = document.createElement('div')
+        msg_container.classList.add('m-2','d-flex','flex-column','justify-content-end')
+        const msg_sender_div = document.createElement('div')
+        const msg_sender_span = document.createElement('span')
+        msg_sender_span.classList.add('fw-bold')
+        const msg_date_span = document.createElement('span')
+        msg_date_span.classList.add('chat-message-date')
+        const msg_content_div = document.createElement('div')
+        const msg_content_span = document.createElement('span')
+
+        // set date
+        const currentdate = new Date().toDateString()
+        msg_date_span.append(document.createTextNode(
+            currentdate
+        ))
+
+        const data = JSON.parse(event.data)
+        // set user
+        msg_sender_span.append(document.createTextNode(
+            data.username + ' '
+        ))
+        msg_sender_div.append(msg_sender_span)
+        msg_sender_div.append(msg_date_span)
+        msg_container.append(msg_sender_div)
+
+        // set content
+        msg_content_span.append(document.createTextNode(
+            data.text
+        ))
+        msg_content_div.append(msg_content_span)
+        msg_container.append(msg_content_div)
+
+
+        msg_list.append(msg_container)
+
+    }
+
+    chatSocket.onclose = function(event) {
+        console.log('Connection closed', event)
+    }
+
+    chatSocket.onerror = function(event) {
+        console.log('Something went wrong', event)
+    }
+
+    const messageForm = document.getElementById('message-form')
+    messageForm.addEventListener('submit', sendMessage)
+
+    function sendMessage(event){
+        if (event.preventDefault) {
+            event.preventDefault()
+        }
+        
+        chatSocket.send(document.getElementById('message').value)
+        messageForm.reset()
+        return false
+    }
+
+</script>
+{% endblock custom_javascript %}

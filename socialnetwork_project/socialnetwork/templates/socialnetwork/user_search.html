@@ -1,0 +1,28 @@
+{% include "./base.html" %}
+
+{% block content %} 
+
+<div class="container">
+    {% if users %}
+        
+        <ul class="list-group">
+            {% for user in users %}
+            <li class="list-group-item d-flex justify-content-between my-3" style="width: 60%;">
+                <div class="d-flex">
+                    {% if user.userprofile.profile_picture %}
+                    <img src="{{user.userprofile.profile_picture.url}}" class="rounded" width="50" height="50" />
+                    {% endif %}
+                    <div class="mx-3">
+                        <h5 class="card-title">
+                            <a href="{% url 'profile' user.username %}" style="text-decoration: none">{{user.username}}</a>
+                        </h5>
+                        <span>{{user.first_name}} {{user.last_name}}</span>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,7 +1,6 @@
-from django.forms.models import construct_instance
+from django.contrib import auth
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views import View
-from django.views.generic.edit import UpdateView
 from .models import *
 from .forms import *
 from django.contrib.auth import authenticate, login, logout
@@ -10,14 +9,14 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse_lazy
-from friend.utils import get_friend_request
+from friend.helpers import find_friend_request
 from friend.models import FriendRequest
+from django.db.models.query_utils import Q
+from django.db.models.functions import Concat 
+from django.db.models import Value as V
 
 # Create your views here.
 
-# @login_required
-# def home(request):
-#     return render(request, 'socialnetwork/home.html')
 
 @login_required
 def user_logout(request):
@@ -25,6 +24,9 @@ def user_logout(request):
     return redirect('/login')
 
 def user_login(request):
+    """
+    Authenticates user
+    """
 
     if request.user.is_authenticated:
         return redirect('/home')
@@ -50,6 +52,9 @@ def user_login(request):
 
 
 def user_signup(request):
+    """
+    Creates new User instance and UserProfile instance
+    """
 
     if request.user.is_authenticated:
         return redirect('/home')
@@ -64,8 +69,7 @@ def user_signup(request):
             if user_form.is_valid() and profile_form.is_valid():
                 user_form.save()
                 user = user_form.save()
-                # user.set_password(user.password1)
-                # user.save()
+
                 profile = profile_form.save(commit=False)
                 profile.user = user
 
@@ -94,38 +98,70 @@ def user_signup(request):
 
 
 class Home(View):
+    """
+    Displays the homepage. News feed of the logged user
+    """
 
     def get(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_date')
-        post_form = PostForm()
+        """
+        Return list of posts from logged user's friends list
+        """
 
-        context = {
-            'post_list': posts,
-            'post_form': post_form
-        }
+        user = request.user
+        profile = UserProfile.objects.filter(user=user).first()
 
-        return render(request, 'socialnetwork/home.html', context)
+        if profile is not None:
 
-    def post(self, request, *args, **kwargs):
-        posts = Post.objects.all().order_by('-created_date')
-        post_form = PostForm(request.POST)
+            user_friends = user.userprofile.friends.all()
+            # get logged user posts and friends posts
+            feed_posts = Post.objects.filter(Q(author__in=user_friends) | Q(author=user)).order_by('-created_date')
 
-        if request.user.is_authenticated & post_form.is_valid():
-            new_post = post_form.save(commit=False)
-            user = request.user
-            new_post.author = user 
-            new_post.save()
-
-            messages.success(request, 'Post created.')
+            post_form = PostForm()
 
             context = {
-                'post_list': posts,
+                'post_list': feed_posts,
                 'post_form': post_form
             }
 
             return render(request, 'socialnetwork/home.html', context)
 
+        else:
+            messages.error(request, 'Create an account.')
+            logout(request)
+            return redirect('/login')
+
+    def post(self, request, *args, **kwargs):
+        """
+        Save post instance 
+        """
+
+        post_form = PostForm(request.POST, request.FILES)
+
+        if request.user.is_authenticated & post_form.is_valid():
+            new_post = post_form.save(commit=False)
+            user = request.user
+            new_post.author = user 
+
+            new_post.save()
+
+            user_friends = user.userprofile.friends.all()
+            feed_posts = Post.objects.filter(Q(author__in=user_friends) | Q(author=user)).order_by('-created_date')
+
+            messages.success(request, 'Post created.')
+
+            new_post_form = PostForm()
+
+            context = {
+                'post_list': feed_posts,
+                'post_form': new_post_form
+            }
+
+            return render(request, 'socialnetwork/home.html', context)
+
 class UserProfileView(View):
+    """
+    Returns info of the user profile such as posts, friends 
+    """
 
     def get(self, request, username, *args, **kwargs):
 
@@ -137,40 +173,42 @@ class UserProfileView(View):
 
         user = request.user
 
-        is_self = False
+        is_logged_user = False
         is_friend = False
         if user.is_authenticated and user != profile_user:
-            is_self = False
+            is_logged_user = False
             if profile_friends.filter(username=user.username):
                 is_friend = True
             else: 
                 is_friend = False
-                # if not friends, check if there is any active friend request
-                # case 1: you have a pending request
-                if get_friend_request(sender=profile_user, receiver=user) != False:
-                    friend_request_sent_to_user = get_friend_request(sender=profile_user, receiver=user)
+                # if not friends, check if there is an active friend request
+                # logged user has pending request 
+                if find_friend_request(user_sender=profile_user, user_receiver=user) != False:
+                    friend_request_sent_to_user = find_friend_request(user_sender=profile_user, user_receiver=user)
                     pending_to_user_id = friend_request_sent_to_user.id
                     context['pending_to_user_id'] = pending_to_user_id
                     context['sent_request'] = 'sent_to_user'
-                # case 2: they have a pending request from the user
-                elif get_friend_request(sender=user, receiver=profile_user) != False:
-                    friend_request_sent_by_user = get_friend_request(sender=user, receiver=profile_user)
+                # the other user has a pending request
+                elif find_friend_request(user_sender=user, user_receiver=profile_user) != False:
+                    friend_request_sent_by_user = find_friend_request(user_sender=user, user_receiver=profile_user)
                     pending_to_them_id = friend_request_sent_by_user.id
                     context['pending_to_them_id'] = pending_to_them_id
                     context['sent_request'] = 'sent_to_them'
-                # case 3: no requests
+                # there are no requests
                 else:
                     context['sent_request'] = 'no_request'
 
         elif user.is_authenticated and user == profile_user:
-            is_self = True
-            friend_requests = FriendRequest.objects.filter(receiver=user, is_active=True)
-            context['friend_requests'] = friend_requests
+            is_logged_user = True
+            friend_requests_received = FriendRequest.objects.filter(receiver=user, is_active=True)
+            friend_requests_sent = FriendRequest.objects.filter(sender=user, is_active=True)
+            context['friend_requests_received'] = friend_requests_received
+            context['friend_requests_sent'] = friend_requests_sent
 
         context['user'] = user
         context['profile'] = profile
         context['post_list'] = profile_posts
-        context['is_self'] = is_self
+        context['is_logged_user'] = is_logged_user
         context['is_friend'] = is_friend
         context['friends'] = profile_friends
 
@@ -223,4 +261,23 @@ class EditProfile(View):
         }
 
         return render(request, 'socialnetwork/profile_edit.html', context)
+
+
+class UserSearch(View):
+
+    def get(self, request, *args, **kwargs):
+        user_searched = self.request.GET.get('query')
+        users = User.objects.annotate(full_name=Concat('first_name', V(' '), 'last_name')).filter(
+            Q(username__icontains=user_searched)|
+            Q(first_name__icontains=user_searched)|
+            Q(last_name__icontains=user_searched)|
+            Q(full_name__icontains=user_searched)
+        )
+
+        context = {
+            'users': users,
+        }
+
+        return render(request, 'socialnetwork/user_search.html', context)
+
 

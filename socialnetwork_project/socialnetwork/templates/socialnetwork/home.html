@@ -1,10 +1,9 @@
 {% extends "./base.html" %}
 
 {% block content %} 
-    <h4>Home</h4>
-
+<div class="container my-3">
     {% if user.is_authenticated %}
-        <p>Welcome, {{ user.username }}. Thanks for logging in.</p>
+        <p class="text-center py-3">Welcome, {{ user.username }}. Thanks for logging in.</p>
 
         {% if messages %}
         <ul class="messages">
@@ -22,26 +21,61 @@
         </ul>
         {% endif %}
 
-        <form class="mx-1 mx-md-4" id="post_form" method="post" action=""
-        enctype="multipart/form-data">
+        <div class="container p-3" style="width: 70vw;">
+            <form class="mx-1 mx-md-4" id="post_form" method="post" action=""
+            enctype="multipart/form-data">
+        
+                {% csrf_token %}
+
+                <div>
+                    <div>
+                        <label class="form-label" for="text"></label>
+                        {{ post_form.text }}
+                    </div>
+                    <p class="text-danger"><small>{{ post_form.text.errors.0 }}</small></p>
+                </div>
+
+                <div class="ps-3 d-flex flex-row align-items-center">
+                    <div class="d-flex">
+                        <label class="form-label" for="image">Add image (Optional): &nbsp </label>
+                        {{ post_form.image }}
+                    </div>
+                    <p class="text-danger"><small>{{ post_form.image.errors.0 }}</small></p>
+                </div>
+        
+                <div class="d-grip gap-2 d-flex justify-content-center">
+                    <input type="submit" name="submit" class="btn btn-primary" value="Post" />
+                </div>
+        
+            </form>
+        </div>
     
-            {% csrf_token %}
-            {{ post_form }}
-    
-            <div class="d-grip gap-2 d-flex justify-content-center">
-                <input type="submit" name="submit" class="btn btn-primary btn-lg" value="Post" />
-            </div>
-    
-        </form>
-    
-        {% for post in post_list %}
-            <a href="{% url 'profile' post.author.username %}"> {{ post.author.username }} </a>
-            <h1> {{ post.text }} </h1>
-            <h1> {{ post.created_date }} </h1>
-        {% endfor %}    
+        <div class="container my-3" style="width: 70vw;">
+            <h5>Latest news from your friends</h5>
+            {% for post in post_list %}
+                <div class="card mb-3 my-3" style="max-width: 600px; margin: 0 auto;">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <div class="author-details d-flex align-items-center">
+                            <img src="{{ post.author.userprofile.profile_picture.url }}" class="rounded" width="50" height="50" />
+                            <a href="{% url 'profile' post.author.username %}" class="text-decoration-none text-reset mx-3 my-0 fw-bold"> {{ post.author.username }} </a>
+                        </div>
+                        <div>
+                            <p class="card-text"><small class="text-muted">{{ post.created_date }}</small></p>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">{{ post.text }}</p>
+                        {% if post.image %}
+                            <img src="{{ post.image.url }}" class="rounded mx-auto d-block" alt="..." style="height: 300px; width:250px;">
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}    
+        </div>
         
     {% else %}
         <p>Welcome, new user. Please log in.</p>
     {% endif %}
+</div>
 
 {% endblock %}

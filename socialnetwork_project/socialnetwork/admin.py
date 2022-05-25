@@ -6,7 +6,6 @@ from .models import *
 class UserProfileAdmin(admin.ModelAdmin):
     list_filter = ['user']
     list_display = ['user']
-    # list_display = ('get_friends', 'user')
     search_fields = ['user']
 
 

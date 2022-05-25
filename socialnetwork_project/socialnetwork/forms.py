@@ -50,10 +50,11 @@ class UserForm(forms.ModelForm):
 
 class PostForm(forms.ModelForm):
 
-    text = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Whats on your mind'}))
+    text = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Whats on your mind', 'rows':3}))
+    image = forms.ImageField(required=False, error_messages = {'invalid': "Image files only"}, widget=forms.FileInput)
 
     class Meta:
         model = Post
-        fields = ['text']
+        fields = ['text', 'image']
 
 

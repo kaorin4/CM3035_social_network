@@ -5,11 +5,16 @@
         <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse d-flex justify-content-between" id="navbarSupportedContent">
-            <form class="d-flex">
-                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+            <form class="d-flex" method="get" action="{% url 'user-search' %}">
+                <input class="form-control me-2" type="search" placeholder="Search users" aria-label="Search" name="query" value={{request.GET.query}}>
                 <button class="btn btn-outline-success" type="submit">Search</button>
             </form>
             <div class="navbar-nav d-flex align-items-center">
+                <div>
+                    <a class="nav-item nav-link" href="{% url 'chat:chat_list' %}"> 
+                        Messages
+                    </a>
+                </div>
                 <div>
                     <a class="nav-link d-flex align-items-center" href="{% url 'profile' request.user.username %}"> 
                         <img src="{{ request.user.userprofile.profile_picture.url }}" class="rounded" width="35" height="35" />
